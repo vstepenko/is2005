@@ -1,6 +1,7 @@
 package ua.edu.duan.is2005.controller;
 
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +23,7 @@ public class StudentController {
 
     private final StudentService studentService;
 
+    @Operation(summary = "get Students", description = "Full Description of this endpoint")
     @GetMapping("/students")
     @ResponseBody
     public List<StudentDto> getStudent() {
