@@ -1,0 +1,38 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet id="security" author="vstepenko">
+        <createTable tableName="users" >
+            <column name="username" type="VARCHAR(50)">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="password" type="VARCHAR(68)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="enabled" type="SMALLINT(1)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="authorities">
+            <column name="username" type="VARCHAR(50)">
+                <constraints foreignKeyName="fk_authority_to_user" referencedTableSchemaName="test"
+                             referencedTableName="users" referencedColumnNames="username"/>
+            </column>
+            <column name="authority" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <insert tableName="users">
+            <column name="username" value="test"/>
+            <column name="password" value="{noop}test"/>
+            <column name="enabled" value="1"/>
+        </insert>
+        <insert tableName="authorities">
+            <column name="username" value="test"/>
+            <column name="authority" value="TEACHER"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

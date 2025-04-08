@@ -6,15 +6,16 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+
+import javax.sql.DataSource;
 
 @Configuration
 public class SecurityConfiguration {
 
-    @Bean
+   /* @Bean
     public InMemoryUserDetailsManager userDetailsManager(){
 
         UserDetails tom = User.builder()
@@ -30,20 +31,25 @@ public class SecurityConfiguration {
                 .build();
 
         return new InMemoryUserDetailsManager(tom, gatto);
+    }*/
+
+    @Bean
+    public UserDetailsManager userDetailsManager(DataSource dataSource) {
+        return new JdbcUserDetailsManager(dataSource);
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(configurer -> {
-                    configurer.requestMatchers(HttpMethod.GET, "/").hasAnyRole("TEACHER", "MANAGER");
-                    configurer.requestMatchers(HttpMethod.GET, "/swagger-ui/**").hasAnyRole("TEACHER", "MANAGER");
-                    configurer.requestMatchers(HttpMethod.GET, "/v3/api-docs/**").hasAnyRole("TEACHER", "MANAGER");
-                    configurer.requestMatchers(HttpMethod.GET, "/v3/api-docs").hasAnyRole("TEACHER", "MANAGER");
-                    configurer.requestMatchers(HttpMethod.GET, "/students").hasAnyRole("TEACHER", "MANAGER");
-                    configurer.requestMatchers(HttpMethod.GET, "/student/**").hasAnyRole("TEACHER", "MANAGER");
-                    configurer.requestMatchers(HttpMethod.POST, "/student").hasAnyRole("MANAGER");
-                    configurer.requestMatchers(HttpMethod.PUT, "/student").hasAnyRole("MANAGER");
-                    configurer.requestMatchers(HttpMethod.DELETE, "/student").hasAnyRole("MANAGER");
+                    configurer.requestMatchers(HttpMethod.GET, "/").hasAnyAuthority("TEACHER", "MANAGER");
+                    configurer.requestMatchers(HttpMethod.GET, "/swagger-ui/**").hasAnyAuthority("TEACHER", "MANAGER");
+                    configurer.requestMatchers(HttpMethod.GET, "/v3/api-docs/**").hasAnyAuthority("TEACHER", "MANAGER");
+                    configurer.requestMatchers(HttpMethod.GET, "/v3/api-docs").hasAnyAuthority("TEACHER", "MANAGER");
+                    configurer.requestMatchers(HttpMethod.GET, "/students").hasAnyAuthority("TEACHER", "MANAGER");
+                    configurer.requestMatchers(HttpMethod.GET, "/student/**").hasAnyAuthority("TEACHER", "MANAGER");
+                    configurer.requestMatchers(HttpMethod.POST, "/student").hasAnyAuthority("MANAGER");
+                    configurer.requestMatchers(HttpMethod.PUT, "/student").hasAnyAuthority("MANAGER");
+                    configurer.requestMatchers(HttpMethod.DELETE, "/student").hasAnyAuthority("MANAGER");
                 }
         );
         http.httpBasic(Customizer.withDefaults());
